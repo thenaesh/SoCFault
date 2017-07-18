@@ -3,6 +3,7 @@
 module Config
     ( loadConfig
     , Config (..)
+    , DBConfig (..)
     ) where
 
 import qualified Data.ByteString.Lazy as B
@@ -19,6 +20,16 @@ loadConfig fileName = B.readFile path >>= (return . decode)
 
 data Config = Config
     { botToken :: !Text
+    , dbConfig :: !DBConfig
     } deriving (Show, Generic)
 
 instance FromJSON Config
+
+data DBConfig = DBConfig
+    { host :: !Text
+    , db :: !Text
+    , user :: !Text
+    , password :: !Text
+    } deriving (Show, Generic)
+
+instance FromJSON DBConfig
