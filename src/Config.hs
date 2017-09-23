@@ -8,20 +8,17 @@ module Config
 
 import qualified Data.ByteString.Lazy as B
 import Control.Monad
-import Control.Monad.Trans
-import Control.Monad.Trans.Maybe
-import Data.Maybe
 import Data.Text
 import Data.Aeson
 import GHC.Generics
 
 
-loadConfig :: FilePath -> MaybeT IO Config
-loadConfig fileName = MaybeT $ do
+loadConfig :: FilePath -> IO Config
+loadConfig fileName = do
     file <- B.readFile path
-    let config = decode file
-    when (isNothing config) $ putStrLn errorMsg
-    return config
+    case decode file of
+        Nothing -> error errorMsg -- uncoverable error, terminate the program
+        Just config -> return config
     where
         path = mconcat [basePath, "/", fileName]
         basePath = "config"
