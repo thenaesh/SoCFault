@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Controller
 
-main :: IO ()
-main = someFunc
+
+main = runBot "development.json"

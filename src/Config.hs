@@ -17,7 +17,7 @@ loadConfig :: FilePath -> IO Config
 loadConfig fileName = do
     file <- B.readFile path
     case decode file of
-        Nothing -> error errorMsg -- uncoverable error, terminate the program
+        Nothing -> error errorMsg -- unrecoverable error, terminate the program
         Just config -> return config
     where
         path = mconcat [basePath, "/", fileName]
