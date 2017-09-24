@@ -11,10 +11,9 @@ import Config
 
 
 data MessageFromUser = MessageFromUser
-    { _updateId :: Int
+    { _chatId :: Int64
     , _sender :: User
     , _messageText :: Text
-    , _chatId :: Int64
     } deriving Show
 
 data MessageToUser = MessageToUser

@@ -8,7 +8,6 @@ import Control.Monad.Trans
 import Control.Monad.Trans.Maybe
 import Data.Maybe
 import Data.IORef
-import Data.Text hiding (filter)
 import Network.HTTP.Client (Manager)
 import Web.Telegram.API.Bot
 
@@ -17,10 +16,8 @@ import BotState
 import Message (MessageFromUser (..))
 
 
-createGetUpdatesRequest :: IORef (Maybe Int) -> IO GetUpdatesRequest
-createGetUpdatesRequest mostRecentUpdateId = do
-    nextUpdateId <- readIORef mostRecentUpdateId >>= return . (fmap (+1))
-    return $ defaultGetUpdatesRequest { updates_offset = nextUpdateId }
+createGetUpdatesRequest :: Maybe Int -> IO GetUpdatesRequest
+createGetUpdatesRequest nextUpdateId = return $ defaultGetUpdatesRequest { updates_offset = nextUpdateId }
     where
         defaultGetUpdatesRequest = GetUpdatesRequest
             { updates_offset = Nothing
@@ -31,7 +28,7 @@ createGetUpdatesRequest mostRecentUpdateId = do
 
 getNewMessages :: Config -> BotState -> MaybeT IO [MessageFromUser]
 getNewMessages config botState = MaybeT $ do
-    updatesRequestDetails <- createGetUpdatesRequest $ _mostRecentUpdateId botState
+    updatesRequestDetails <- getNextUpdateId botState >>= createGetUpdatesRequest
     let updater = getUpdatesM updatesRequestDetails
     let token = Token $ _botToken config
     let manager = _httpManager botState
@@ -41,16 +38,24 @@ getNewMessages config botState = MaybeT $ do
             putStrLn "Unable to get new messages!"
             return Nothing
         Right u -> do
+            updateMostRecentUpdateId botState $ result u
             let msgs = fmap extractKeyInfoFromUpdate $ result u
             let msgs' = filter isJust msgs -- we completely ignore any malformed messages
-            forM_ msgs' $ \(Just msg) -> writeIORef (_mostRecentUpdateId botState) (Just $ _updateId msg)
             return $ sequence msgs'
+
+getNextUpdateId :: BotState -> IO (Maybe Int)
+getNextUpdateId botState = readIORef (_mostRecentUpdateId botState) >>= return . (fmap (+1))
+
+updateMostRecentUpdateId :: BotState -> [Update] -> IO ()
+updateMostRecentUpdateId botState updates = do
+    currentMostRecentUpdateId <- readIORef (_mostRecentUpdateId botState)
+    let newMostRecentUpdateId = foldr max currentMostRecentUpdateId $ fmap (Just . update_id) updates
+    writeIORef (_mostRecentUpdateId botState) newMostRecentUpdateId
 
 extractKeyInfoFromUpdate :: Update -> Maybe MessageFromUser
 extractKeyInfoFromUpdate update = do
-    let updateId = update_id update
     msg <- message update
     sender <- from msg
     msgText <- text msg
     let chatId = chat_id $ chat msg
-    return $ MessageFromUser updateId sender msgText chatId
+    return $ MessageFromUser chatId sender msgText
