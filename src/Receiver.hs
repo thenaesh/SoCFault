@@ -14,7 +14,7 @@ import Data.Text hiding (filter)
 import Network.HTTP.Client (Manager)
 import Web.Telegram.API.Bot
 
-import CommonTypes
+import CommonTypes (BotState (..), MessageFromUser (..))
 import Config
 
 
@@ -52,4 +52,5 @@ extractKeyInfoFromUpdate update = do
     msg <- message update
     sender <- from msg
     msgText <- text msg
-    return $ MessageFromUser updateId sender msgText
+    let chatId = chat_id $ chat msg
+    return $ MessageFromUser updateId sender msgText chatId
