@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings, DuplicateRecordFields #-}
-
 module Controller
     ( runBot
     ) where

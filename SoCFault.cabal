@@ -15,8 +15,9 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     CommonTypes
-                     , Config
+  exposed-modules:     Config
+                     , BotState
+                     , Message
                      , Controller
                      , Receiver
                      , Sender
@@ -32,6 +33,8 @@ library
                      , persistent
                      , persistent-template
                      , persistent-postgresql
+  default-extensions:  OverloadedStrings
+                     , DuplicateRecordFields
   default-language:    Haskell2010
 
 executable SoCFault-exe
