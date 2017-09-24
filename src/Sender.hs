@@ -14,8 +14,9 @@ import Data.Text hiding (filter)
 import Network.HTTP.Client (Manager)
 import Web.Telegram.API.Bot
 
-import CommonTypes (BotState (..), MessageToUser (..))
 import Config
+import BotState
+import Message (MessageToUser (..))
 
 
 createSendMessageRequest :: Int64 -> Text -> SendMessageRequest

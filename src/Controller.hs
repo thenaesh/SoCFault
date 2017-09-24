@@ -14,8 +14,9 @@ import Network.HTTP.Client (Manager, newManager)
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 import Web.Telegram.API.Bot
 
-import CommonTypes
 import Config
+import BotState
+import Message
 import Receiver
 import Sender
 

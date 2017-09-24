@@ -14,8 +14,9 @@ import Data.Text hiding (filter)
 import Network.HTTP.Client (Manager)
 import Web.Telegram.API.Bot
 
-import CommonTypes (BotState (..), MessageFromUser (..))
 import Config
+import BotState
+import Message (MessageFromUser (..))
 
 
 createGetUpdatesRequest :: IORef (Maybe Int) -> IO GetUpdatesRequest
