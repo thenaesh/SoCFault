@@ -42,7 +42,8 @@ getNewMessages config botState = MaybeT $ do
             return Nothing
         Right u -> do
             let msgs = fmap extractKeyInfoFromUpdate $ result u
-            let msgs' = filter isJust msgs
+            let msgs' = filter isJust msgs -- we completely ignore any malformed messages
+            forM_ msgs' $ \(Just msg) -> writeIORef (_mostRecentUpdateId botState) (Just $ _updateId msg)
             return $ sequence msgs'
 
 extractKeyInfoFromUpdate :: Update -> Maybe MessageFromUser

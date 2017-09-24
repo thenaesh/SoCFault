@@ -41,14 +41,13 @@ eventLoop config botState = do
 
 pulse :: Config -> BotState -> MaybeT IO ()
 pulse config botState = do
-    msgs <- getNewMessages config botState
-    responses <- sequence $ fmap (processMessage config botState) msgs
-    sendMessagesToChat config botState responses
+    msgs <- getNewMessages config botState -- stop if receiving messages fails
+    responses <- liftIO $ sequence $ fmap (processMessage config botState) msgs
+    sendMessagesToChat config botState responses -- stop if sending messages fails
 
-processMessage :: Config -> BotState -> MessageFromUser -> MaybeT IO MessageToUser
+processMessage :: Config -> BotState -> MessageFromUser -> IO MessageToUser
 processMessage config botState messageFromUser = do
-    liftIO $ print messageFromUser
-    liftIO $ writeIORef (_mostRecentUpdateId botState) (Just $ _updateId messageFromUser)
+    print messageFromUser
     return $ MessageToUser chatId response
         where
             response = mconcat ["Hello ", name, ", your message \"", msgText, "\" has been received!"]
