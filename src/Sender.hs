@@ -14,7 +14,7 @@ import Web.Telegram.API.Bot
 
 import Config
 import BotState
-import Message (MessageToUser (..))
+import Message
 
 
 createSendMessageRequest :: Int64 -> Text -> SendMessageRequest

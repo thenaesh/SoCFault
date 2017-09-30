@@ -13,7 +13,7 @@ import Web.Telegram.API.Bot
 
 import Config
 import BotState
-import Message (MessageFromUser (..))
+import Message
 
 
 createGetUpdatesRequest :: Maybe Int -> IO GetUpdatesRequest
@@ -58,4 +58,4 @@ extractKeyInfoFromUpdate update = do
     sender <- from msg
     msgText <- text msg
     let chatId = chat_id $ chat msg
-    return $ MessageFromUser chatId sender msgText
+    return $ MessageFromUser chatId msgText sender

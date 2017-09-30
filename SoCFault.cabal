@@ -34,7 +34,6 @@ library
                      , persistent-template
                      , persistent-postgresql
   default-extensions:  OverloadedStrings
-                     , DuplicateRecordFields
   default-language:    Haskell2010
 
 executable SoCFault-exe

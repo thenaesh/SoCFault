@@ -52,5 +52,5 @@ processMessage config botState messageFromUser = do
         where
             response = mconcat ["Hello ", name, ", your message \"", msgText, "\" has been received!"]
             name = user_first_name $ _sender messageFromUser
-            msgText = _messageText (messageFromUser :: MessageFromUser)
-            chatId = _chatId (messageFromUser :: MessageFromUser)
+            msgText = _messageText messageFromUser
+            chatId = _chatId messageFromUser
